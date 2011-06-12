@@ -1,5 +1,19 @@
 package org.androidtitlan.locationpollertest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -7,6 +21,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,10 +30,14 @@ import com.commonsware.cwac.locpoll.LocationPoller;
 public class LocationPollerTest extends Activity {
 //	private static final int PERIOD=300000; 	// 5 minutes
 //	private static final int PERIOD = 60000; //1 minute
-	private static final int PERIOD = 15000; //15 secs
-	
+//	private static final int PERIOD = 15000; //15 secs
+	private static final int PERIOD = 180000; //3 minutes
+		
 	private AlarmManager mgr;
 	private PendingIntent pi;
+
+//	private URI serverUrl = URI.create("http://3w35.localtunnel.com/position/create/");
+
 
 	/** Called when the activity is first created. */
     @Override
@@ -44,10 +63,37 @@ public class LocationPollerTest extends Activity {
 		
 		Toast
 		.makeText(this,
-							"Location polling every 1 minute started",
+							"Location polling every 3 minute started",
 							Toast.LENGTH_LONG)
-		.show();          
-		                                         
+		.show();  
+		
+//		sendJson(latitude, longitude );
+	
+		doPost(); 
+    }
+    public void doPost(){
+        try {
+        HttpClient client = new DefaultHttpClient();  
+         String postURL = "http://magictaxi.heroku.com/position/create"; 
+//       String postURL = "http://www.postbin.org/1g3lqnu";  
+        HttpPost post = new HttpPost(postURL); 
+            List<NameValuePair> params = new ArrayList<NameValuePair>();
+            params.add(new BasicNameValuePair("latitude", "66.6"));
+            params.add(new BasicNameValuePair("longitude", "66.6"));
+            params.add(new BasicNameValuePair("taxi_id", "1"));
+
+            UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params,HTTP.UTF_8);
+            post.setEntity(ent);
+
+            HttpResponse responsePOST = client.execute(post);  
+            HttpEntity resEntity = responsePOST.getEntity();  
+            if (resEntity != null) {     
+                Log.i("RESPONSE",EntityUtils.toString(resEntity));                
+            }
+    } catch (Exception e) {
+        e.printStackTrace();
+        }
+    
     }
 	public void omgPleaseStop(View v) {
 		mgr.cancel(pi);
