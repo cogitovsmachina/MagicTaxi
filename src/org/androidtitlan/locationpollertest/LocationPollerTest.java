@@ -37,11 +37,40 @@ public class LocationPollerTest extends Activity {
 	private PendingIntent pi;
 
 
+	private double mLatitude;
+
+	private String latitude; 
+	private String longitude;
+
+	private double mLongitude;
+
+
+
+
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        Bundle extras = getIntent().getExtras();
+        
+        double newString;
+		if (savedInstanceState == null) {
+            extras = getIntent().getExtras();
+            if(extras == null) {
+            	Toast.makeText(getApplicationContext(), "Connection problem, try again later", Toast.LENGTH_SHORT).show();
+                newString= 1;
+            } else {
+                mLatitude= extras.getDouble("latitude");
+                latitude = Double.toString(mLatitude);
+                
+                mLongitude = extras.getDouble("longitude");
+                longitude = Double.toString(mLongitude);
+            }
+        } else {
+            newString= (Double) savedInstanceState.getSerializable("latitude");
+        }
         
 		
 		mgr=(AlarmManager)getSystemService(ALARM_SERVICE);
@@ -64,21 +93,27 @@ public class LocationPollerTest extends Activity {
 							"Location polling every 3 minute started",
 							Toast.LENGTH_LONG)
 		.show();  
-		
-//		sendJson(latitude, longitude );
-	
+			
 		doPost(); 
     }
     public void doPost(){
-        try {
-        HttpClient client = new DefaultHttpClient();  
-         String postURL = "http://magictaxi.heroku.com/position/create"; 
-//       String postURL = "http://www.postbin.org/1g3lqnu";  
+        try {        	
+        	
+        HttpClient client = new DefaultHttpClient();	
+         String postURL = "http://magictaxi.heroku.com/position/create";
+//       String postURL = "http://www.postbin.org/1g3lqnu";
         HttpPost post = new HttpPost(postURL); 
             List<NameValuePair> params = new ArrayList<NameValuePair>();
-            params.add(new BasicNameValuePair("latitude", "66.6"));
-            params.add(new BasicNameValuePair("longitude", "66.6"));
-            params.add(new BasicNameValuePair("taxi_id", "1"));
+            
+//            params.add(new BasicNameValuePair("latitude", "66.6"));
+//            params.add(new BasicNameValuePair("longitude", "66.6")); 
+          params.add(new BasicNameValuePair("latitude", latitude));
+          params.add(new BasicNameValuePair("longitude",longitude));
+          params.add(new BasicNameValuePair("taxi_id", "1"));
+          
+          
+
+
 
             UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params,HTTP.UTF_8);
             post.setEntity(ent);
@@ -86,8 +121,8 @@ public class LocationPollerTest extends Activity {
             HttpResponse responsePOST = client.execute(post);  
             HttpEntity resEntity = responsePOST.getEntity();  
             if (resEntity != null) {     
-                Log.i("RESPONSE",EntityUtils.toString(resEntity));                
-            }
+                Log.i("RESPONSE", EntityUtils.toString(resEntity));                
+            } 
     } catch (Exception e) {
         e.printStackTrace();
         }
