@@ -28,15 +28,13 @@ import android.widget.Toast;
 import com.commonsware.cwac.locpoll.LocationPoller;
 
 public class LocationPollerTest extends Activity {
-//	private static final int PERIOD=300000; 	// 5 minutes
+	
 //	private static final int PERIOD = 60000; //1 minute
 //	private static final int PERIOD = 15000; //15 secs
 	private static final int PERIOD = 180000; //3 minutes
 		
 	private AlarmManager mgr;
 	private PendingIntent pi;
-
-//	private URI serverUrl = URI.create("http://3w35.localtunnel.com/position/create/");
 
 
 	/** Called when the activity is first created. */
