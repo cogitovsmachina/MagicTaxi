@@ -30,23 +30,17 @@ import com.commonsware.cwac.locpoll.LocationPoller;
 public class LocationPollerTest extends Activity {
 	
 //	private static final int PERIOD = 60000; //1 minute
-//	private static final int PERIOD = 15000; //15 secs
 	private static final int PERIOD = 180000; //3 minutes
 		
 	private AlarmManager mgr;
 	private PendingIntent pi;
 
-
-	private double mLatitude;
-
 	private String latitude; 
 	private String longitude;
 
 	private double mLongitude;
-
-
-
-
+	private double mLatitude;
+	
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,20 +95,14 @@ public class LocationPollerTest extends Activity {
         	
         HttpClient client = new DefaultHttpClient();	
          String postURL = "http://magictaxi.heroku.com/position/create";
-//       String postURL = "http://www.postbin.org/1g3lqnu";
         HttpPost post = new HttpPost(postURL); 
             List<NameValuePair> params = new ArrayList<NameValuePair>();
             
-//            params.add(new BasicNameValuePair("latitude", "66.6"));
-//            params.add(new BasicNameValuePair("longitude", "66.6")); 
+           //Passing latitude and longitude as Strings
           params.add(new BasicNameValuePair("latitude", latitude));
           params.add(new BasicNameValuePair("longitude",longitude));
           params.add(new BasicNameValuePair("taxi_id", "1"));
           
-          
-
-
-
             UrlEncodedFormEntity ent = new UrlEncodedFormEntity(params,HTTP.UTF_8);
             post.setEntity(ent);
 
@@ -128,6 +116,8 @@ public class LocationPollerTest extends Activity {
         }
     
     }
+    
+    //Cancelling the poll
 	public void omgPleaseStop(View v) {
 		mgr.cancel(pi);
 		finish();
